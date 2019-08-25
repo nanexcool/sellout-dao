@@ -2,30 +2,17 @@ pragma solidity ^0.5.10;
 
 import "ds-test/test.sol";
 
-import "./OpenMoloch.sol";
-
-contract FakeUser {
-    WethLike weth;
-
-    constructor(WethLike weth_) public {
-        weth = weth_;
-    }
-
-    function approve(address guy, uint256 wad) external {
-        weth.approve(guy, wad);
-    }
-}
+import "./SelloutDao.sol";
 
 contract Hevm {
     function warp(uint256) public;
 }
 
-contract OpenMolochTest is DSTest {
+contract SelloutDaoTest is DSTest {
     MolochLike dao;
-    OpenMoloch om;
+    SelloutDao om;
     WethLike weth;
     GemLike gem;
-    FakeUser u;
     Hevm hevm;
 
     function () external payable {
@@ -37,22 +24,33 @@ contract OpenMolochTest is DSTest {
         dao = MolochLike(0x1fd169A4f5c59ACf79d0Fd5d91D1201EF1Bce9f1);
         weth = WethLike(0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2);
         gem = GemLike(0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2);
-        u = new FakeUser(weth);
-        om = new OpenMoloch(dao, gem);
+    }
+
+    function test_after() public {
+        om = SelloutDao(0x829fE69F1feA3305C1aa0C1873b22835b87200d6);
+        
     }
 
     function test_basic_sanity() public {
-        uint256 prop = 95;
+        om = new SelloutDao(dao);
 
         // hand over control to the Sellout proxy
         dao.updateDelegateKey(address(om));
 
-        // uint256 top = om.top();
-        // emit log_named_uint('top', top);
+        assertTrue(!om.sold());
 
-        // assertEq(m.getMemberProposalVote(0xcd16CBdA54af2556EBB6df4FBFd178e63c33FD89, prop), 0);
-        // om.vote(prop, 1);
-        // assertEq(m.getMemberProposalVote(0xcd16CBdA54af2556EBB6df4FBFd178e63c33FD89, prop), 1);
+        address payable omg = address(om);
+
+        assertEq(address(omg).balance, 0);
+
+        assertEq(om.hat(), address(0x0));
+
+        omg.call.value(1 ether).gas(100000)("");
+
+        assertEq(address(omg).balance, 1 ether);
+
+        assertTrue(om.sold());
+        assertEq(om.hat(), address(this));
 
         assertEq(weth.balanceOf(address(this)), 0);
 
@@ -61,7 +59,10 @@ contract OpenMolochTest is DSTest {
 
         assertEq(weth.balanceOf(address(om)), 15 ether);
 
-        om.make();
+        om.make(0xcd16CBdA54af2556EBB6df4FBFd178e63c33FD89, 0, 1, "Hola");
+
+        uint256 prop = om.prop();
+        assertEq(prop, 96);
 
         assertEq(weth.balanceOf(address(om)), 5 ether);
 
@@ -69,25 +70,13 @@ contract OpenMolochTest is DSTest {
         hevm.warp(now + dao.periodDuration());
 
         assertEq(dao.getMemberProposalVote(0xcd16CBdA54af2556EBB6df4FBFd178e63c33FD89, prop), 0);
-        om.vote(prop, 1);
+        om.vote(1);
         assertEq(dao.getMemberProposalVote(0xcd16CBdA54af2556EBB6df4FBFd178e63c33FD89, prop), 1);
-
-        assertEq(address(om).balance, 0);
-
-        address payable omg = address(om);
-
-        assertEq(address(omg).balance, 0);
-
-        omg.transfer(1 ether);
-
-        assertEq(address(omg).balance, 1 ether);
 
         om.take();
 
         assertEq(address(om).balance, 0);
         assertEq(weth.balanceOf(address(om)), 0);
         assertEq(weth.balanceOf(address(this)), 90 ether);
-
-        assertTrue(true);
     }
 }
