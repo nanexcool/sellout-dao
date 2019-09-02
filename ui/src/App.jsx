@@ -1,6 +1,5 @@
 import React from 'react';
 import { ethers } from 'ethers';
-import QRCode from 'qrcode.react';
 import logo from './moloch.png';
 import './App.css';
 
@@ -41,11 +40,10 @@ class App extends React.Component {
           Sell your voting power! <br />
           Works on any Moloch-like DAO
         </p>
-        <QRCode value="0x829fE69F1feA3305C1aa0C1873b22835b87200d6" includeMargin={true} size={300} />
+        <h3>SOLD to 0x2AF4125c8fE208a349ef78d3cb980308ab1Ed34f</h3>
         <p>
-          Send 1 ETH to the address above, and create a Moloch Proposal without being a member!
+          The initial trial of the SelloutDAO was a success! Stay tuned for version 2 ;)
         </p>
-        {this.state.sold && <h3>SOLD to {this.state.hat}</h3>}
         <a
           className="App-link"
           href="https://github.com/nanexcool/sellout-dao"

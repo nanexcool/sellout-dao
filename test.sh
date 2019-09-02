@@ -10,8 +10,10 @@ export MOLOCH_DELEGATE_KEY=0x72BA1965320ab5352FD6D68235Cc3C5306a6FFA2
 
 DAPP_TEST_TIMESTAMP=$(seth block latest timestamp)
 DAPP_TEST_NUMBER=$(seth block latest number)
-DAPP_TEST_ADDRESS=$MOLOCH_KEY
+DAPP_TEST_ADDRESS=$MOLOCH_DELEGATE_KEY
 
 export DAPP_TEST_TIMESTAMP DAPP_TEST_NUMBER DAPP_TEST_ADDRESS
 
-hevm dapp-test --rpc="$ETH_RPC_URL" --json-file=out/dapp.sol.json
+export LANG=C.UTF-8
+
+hevm dapp-test --verbose 2 --rpc="$ETH_RPC_URL" --json-file=out/dapp.sol.json --match after --debug

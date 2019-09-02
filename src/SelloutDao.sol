@@ -4,6 +4,7 @@ contract MolochLike {
     function updateDelegateKey(address) external;
     function submitVote(uint256, uint8) external;
     function submitProposal(address, uint256, uint256, string calldata) external;
+    function processProposal(uint256) external;
     function getProposalQueueLength() external view returns (uint256);
     function getMemberProposalVote(address, uint256) external view returns (uint256);
     function proposalDeposit() external view returns (uint256);
@@ -64,7 +65,7 @@ contract SelloutDao {
         prop = dao.getProposalQueueLength() - 1;
     }
 
-    function vote(uint8 val) external {
+    function vote(uint8 val) external only_hat {
         dao.submitVote(prop, val);
     }
 
