@@ -40,7 +40,15 @@ class App extends React.Component {
           Sell your voting power! <br />
           Works on any Moloch-like DAO
         </p>
-        <h3>SOLD to 0x2AF4125c8fE208a349ef78d3cb980308ab1Ed34f</h3>
+        <h3>SOLD to 0x2AF412...</h3>
+        <a
+          className="App-link"
+          href="https://twitter.com/nanexcool/status/1168640894947471360"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Read the story
+        </a>
         <p>
           The initial trial of the SelloutDAO was a success! Stay tuned for version 2 ;)
         </p>
